@@ -68,12 +68,13 @@
       const thisProduct = this;
 
       /* Generate HTML based on template*/
-
+      const generatedHTML = templates.menuProduct(thisProduct.data);
       /* Create element using utils.createElementFromHTML */
-
+      thisProduct.element = utils.createDOMFromHTML(generatedHTML);
       /* Find menu container */
-
+      const menuContainer = document.querySelector(select.containerOf.menu);
       /* Add element to menu */
+      menuContainer.appendChild(thisProduct.element);
     }
   }
 
