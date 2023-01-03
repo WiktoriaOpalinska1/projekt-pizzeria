@@ -61,8 +61,11 @@
       thisProduct.data = data;
 
       thisProduct.renderInMenu();
+      thisProduct.getElements();
       thisProduct.initAccordion();
-      console.log('New Product: ', thisProduct);
+      thisProduct.initOrderForm();
+      thisProduct.processOrder();
+      //console.log('New Product: ', thisProduct);
     }
 
     renderInMenu(){
@@ -78,12 +81,25 @@
       menuContainer.appendChild(thisProduct.element); 
     }
 
+    getElements(){
+      const thisProduct = this;
+    
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
+      thisProduct.form = thisProduct.element.querySelector(select.menuProduct.form);
+      thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
+      thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
+      thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+
+      /*console.log('thisProduct.form: ', thisProduct.form);
+      console.log('thisProduct.formInputs: ', thisProduct.formInputs);
+      console.log('thisProduct.cartButton: ', thisProduct.cartButton);
+      console.log('thisProduct.priceElem: ', thisProduct.priceElem ); */
+
+    }
+
     initAccordion(){
       const thisProduct = this;
       //console.log('thisProduct.element:' , thisProduct.element);
-
-      /* Find the clickable trigger (the element that should react to clicking) */
-      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
 
       /* Start: add event listener to clickable trigger on event click */
       thisProduct.accordionTrigger.addEventListener('click', function(event){
@@ -105,13 +121,82 @@
         thisProduct.element.classList.toggle('active');
       });
     }
-  }
 
+    initOrderForm(){
+      const thisProduct = this;
+      //console.log('initOrderForm: ', thisProduct);
+
+      /* Add event Listnerer to submit button and prevent default action */
+      thisProduct.form.addEventListener('submit', function(event){
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+
+      /* For each checkbox add event listener */
+      for(let input of thisProduct.formInputs){
+        input.addEventListener('change', function(){
+          thisProduct.processOrder();
+        });
+      }
+
+      /*For cart button prevent default action and add event listener*/
+      thisProduct.cartButton.addEventListener('click', function(event){
+        event.preventDefault();
+        thisProduct.processOrder();
+      });
+    }
+
+    processOrder(){
+      const thisProduct = this;
+      //console.log('processOrder: ', thisProduct);
+
+      /* Covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']} */
+      const formData = utils.serializeFormToObject(thisProduct.form);
+      console.log('Form data: ', formData);
+
+      /* Set price to default price */
+      let price = thisProduct.data.price;
+
+      /* For every category (param)... */
+      for(let paramId in thisProduct.data.params){
+
+        /* Determine param value e.g. paramId = 'toppings', param = {label: 'Toppings', type: 'checkboxes'...} */
+        const param = thisProduct.data.params[paramId];
+        console.log(paramId, param);
+
+        /* For every option in this category */
+        for(let optionId in param.options){
+        
+          /* Determine option value, e.g. optionId = 'olives', option={label: 'Olives', price: 2, default: true} */
+          const option = param.options[optionId];
+          console.log(optionId, option);
+        
+  
+          // Check if there is a param with a name of paramId in formData and if it includes optionId 
+          if(formData[paramId] && formData[paramId].includes(optionId)){
+            //Check if the option is not default 
+            if (!option.hasOwnProperty('default')){
+              //Rise price 
+              price += option['price'];
+            }
+          } else {
+            // Check if the option is default 
+            if (option['default']==true){
+              // Reduce price
+              price -= option['price'];
+            }
+          }
+        }
+      }
+      /* Update calcualted price in the HTML */
+      thisProduct.priceElem.innerHTML = price;
+    }
+  }
   const app = {
 
     initMenu: function(){
       const thisApp = this;
-      console.log('thisApp.data: ', thisApp.data);
+      //console.log('thisApp.data: ', thisApp.data);
 
 
       for(let productData in thisApp.data.products){
