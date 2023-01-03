@@ -80,33 +80,29 @@
 
     initAccordion(){
       const thisProduct = this;
+      //console.log('thisProduct.element:' , thisProduct.element);
 
       /* Find the clickable trigger (the element that should react to clicking) */
-      const clickableTrigger = document.getElementById('product-list').querySelector(select.menuProduct.clickable);
+      thisProduct.accordionTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
 
       /* Start: add event listener to clickable trigger on event click */
-      clickableTrigger.addEventListener('click', function(event){
+      thisProduct.accordionTrigger.addEventListener('click', function(event){
         
         /* Prevent default action for event */
         event.preventDefault();
-        
+
         /* Find the active product */
-        const activeProducts = document.querySelectorAll('article.product-list .active');
-        console.log('activeProducts: ', activeProducts);
+        const activeProducts = document.querySelector(select.all.menuProductsActive);
 
         /* If there is active product and it's not thisProduct.element remove class active from it */ 
-        for (let activeProduct of activeProducts){
-          if(activeProduct){
-            if(activeProduct != thisProduct.element){
-              activeProduct.classList.remove('active');
-            }
-          }  
-        }
-          
-        /* Toogle active class on thisProduct.element */
-        (thisProduct.element).classList.toggle('active');
-        
+        if(activeProducts){
+          if (activeProducts != thisProduct.element){
+            activeProducts.classList.remove('active');
+          }
+        } 
 
+        /* Toogle active class on thisProduct.element */
+        thisProduct.element.classList.toggle('active');
       });
     }
   }
