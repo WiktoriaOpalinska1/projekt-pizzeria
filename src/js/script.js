@@ -89,6 +89,7 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
 
       /*console.log('thisProduct.form: ', thisProduct.form);
       console.log('thisProduct.formInputs: ', thisProduct.formInputs);
@@ -101,23 +102,24 @@
       const thisProduct = this;
       //console.log('thisProduct.element:' , thisProduct.element);
 
-      /* Start: add event listener to clickable trigger on event click */
+      /* Start: add event listener to clickable trigger on event click;
+        Prevent default action for event;
+        Find the active product;
+        If there is active product and it's not thisProduct.element remove class active from it;
+        Toogle active class on thisProduct.element.
+      */
       thisProduct.accordionTrigger.addEventListener('click', function(event){
         
-        /* Prevent default action for event */
         event.preventDefault();
 
-        /* Find the active product */
         const activeProducts = document.querySelector(select.all.menuProductsActive);
 
-        /* If there is active product and it's not thisProduct.element remove class active from it */ 
         if(activeProducts){
           if (activeProducts != thisProduct.element){
             activeProducts.classList.remove('active');
           }
         } 
 
-        /* Toogle active class on thisProduct.element */
         thisProduct.element.classList.toggle('active');
       });
     }
@@ -150,44 +152,59 @@
       const thisProduct = this;
       //console.log('processOrder: ', thisProduct);
 
-      /* Covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']} */
+      /* Covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']};
+        Set price to default price */
       const formData = utils.serializeFormToObject(thisProduct.form);
-      console.log('Form data: ', formData);
+      //console.log('Form data: ', formData);
 
-      /* Set price to default price */
       let price = thisProduct.data.price;
 
-      /* For every category (param)... */
+      /* For every category (param)... 
+      /* Determine param value e.g. paramId = 'toppings', param = {label: 'Toppings', type: 'checkboxes'...} */
+
       for(let paramId in thisProduct.data.params){
-
-        /* Determine param value e.g. paramId = 'toppings', param = {label: 'Toppings', type: 'checkboxes'...} */
         const param = thisProduct.data.params[paramId];
-        console.log(paramId, param);
+        //console.log(paramId, param);
 
-        /* For every option in this category */
-        for(let optionId in param.options){
-        
-          /* Determine option value, e.g. optionId = 'olives', option={label: 'Olives', price: 2, default: true} */
-          const option = param.options[optionId];
-          console.log(optionId, option);
-        
-  
-          // Check if there is a param with a name of paramId in formData and if it includes optionId 
-          if(formData[paramId] && formData[paramId].includes(optionId)){
-            //Check if the option is not default 
+        /* For every option in this category 
+        Determine option value, e.g. optionId = 'olives', option={label: 'Olives', price: 2, default: true} */
+        for(let optionId in param.options){ 
+          
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+
+          const option = param.options[optionId]; 
+          //console.log(optionId, option);
+
+          /* Check if there is a param with a name of paramId in formData and if it includes optionId;
+            Check if the option is not default && Rise price 
+            Check if the option is default  &&  Reduce price*/
+          if(optionSelected){
             if (!option.hasOwnProperty('default')){
-              //Rise price 
               price += option['price'];
             }
           } else {
-            // Check if the option is default 
             if (option['default']==true){
-              // Reduce price
               price -= option['price'];
+            } 
+          }
+
+          /* Find image with .paramId-optionId class; 
+            Check if it was found;
+            If it was found, check if the option is clicked. If yes, show image. If not, hide image  */
+
+          const optionImage = thisProduct.imageWrapper.querySelector( '.'+ paramId + '-' + optionId);
+          console.log('optionImage: ', optionImage); 
+
+          if (optionImage){
+            if (optionSelected){
+              optionImage.classList.add(classNames.menuProduct.imageVisible);
+            } else {
+              optionImage.classList.remove(classNames.menuProduct.imageVisible);
             }
           }
         }
       }
+
       /* Update calcualted price in the HTML */
       thisProduct.priceElem.innerHTML = price;
     }
