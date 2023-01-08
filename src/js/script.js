@@ -100,7 +100,6 @@
       thisProduct.initOrderForm();
       thisProduct.initAmountWidget();
       thisProduct.processOrder();
-      //console.log('New Product: ', thisProduct);
     }
 
     renderInMenu(){
@@ -126,17 +125,10 @@
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
       thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
-
-      /*console.log('thisProduct.form: ', thisProduct.form);
-      console.log('thisProduct.formInputs: ', thisProduct.formInputs);
-      console.log('thisProduct.cartButton: ', thisProduct.cartButton);
-      console.log('thisProduct.priceElem: ', thisProduct.priceElem ); */
-
     }
 
     initAccordion(){
       const thisProduct = this;
-      //console.log('thisProduct.element:' , thisProduct.element);
 
       /* Start: add event listener to clickable trigger on event click;
         Prevent default action for event;
@@ -162,7 +154,6 @@
 
     initOrderForm(){
       const thisProduct = this;
-      //console.log('initOrderForm: ', thisProduct);
 
       /* Add event Listnerer to submit button and prevent default action */
       thisProduct.form.addEventListener('submit', function(event){
@@ -187,12 +178,10 @@
 
     processOrder(){
       const thisProduct = this;
-      //console.log('processOrder: ', thisProduct);
 
       /* Covert form to object structure e.g. { sauce: ['tomato'], toppings: ['olives', 'redPeppers']};
         Set price to default price */
       const formData = utils.serializeFormToObject(thisProduct.form);
-      //console.log('Form data: ', formData);
 
       let price = thisProduct.data.price;
 
@@ -201,7 +190,6 @@
 
       for(let paramId in thisProduct.data.params){
         const param = thisProduct.data.params[paramId];
-        //console.log(paramId, param);
 
         /* For every option in this category 
         Determine option value, e.g. optionId = 'olives', option={label: 'Olives', price: 2, default: true} */
@@ -210,7 +198,6 @@
           const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
 
           const option = param.options[optionId]; 
-          //console.log(optionId, option);
 
           /* Check if there is a param with a name of paramId in formData and if it includes optionId;
             Check if the option is not default && Rise price 
@@ -230,7 +217,6 @@
             If it was found, check if the option is clicked. If yes, show image. If not, hide image  */
 
           const optionImage = thisProduct.imageWrapper.querySelector( '.'+ paramId + '-' + optionId);
-          //console.log('optionImage: ', optionImage); 
 
           if (optionImage){
             if (optionSelected){
@@ -315,9 +301,6 @@
     
     constructor(element){
       const thisWidget = this;
-      
-      //console.log('Amount widget: ', thisWidget);
-      //console.log('constructir arguments: ', element);
 
       thisWidget.getElements(element);
       thisWidget.setValue(settings.amountWidget.defaultValue);
@@ -381,7 +364,6 @@
 
       thisCart.getElements(element);
       thisCart.initActions();
-      //console.log('new Cart: ', thisCart);
     }
 
     getElements(element){
@@ -402,22 +384,60 @@
 
     add(menuProduct){
       const thisCart = this;
-      console.log('adding product: ', menuProduct);
 
       /* Generate HTML based on template*/
       const generatedHTML = templates.cartProduct(menuProduct);
       /* Create element using utils.createElementFromHTML */
-      const generateDOM = utils.createDOMFromHTML(generatedHTML);
+      const generatedDOM = utils.createDOMFromHTML(generatedHTML);
       /* Add element to menu */
-      thisCart.dom.productList.appendChild(generateDOM); 
+      thisCart.dom.productList.appendChild(generatedDOM);
+
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));      
+    }
+  }
+
+  class CartProduct{
+    constructor(menuProduct, element){
+      const thisCartProduct = this;
+
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.name = menuProduct.name;
+      thisCartProduct.amount = menuProduct.amount;
+      thisCartProduct.params = menuProduct.params;
+      thisCartProduct.price = menuProduct.price;
+      thisCartProduct.priceSingle = menuProduct.priceSingle;
+
+      thisCartProduct.getElements(element);
+      thisCartProduct.initAmountWidget();
+    }
+
+    getElements(element) {
+      const thisCartProduct = this;
+  
+      thisCartProduct.dom = {};
+      thisCartProduct.dom.wrapper = element;
+
+      thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
+      thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.price);
+      thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
+    }
+  
+    initAmountWidget() {
+      const thisCartProduct = this;
+      thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
+  
+      thisCartProduct.dom.amountWidget.addEventListener('updated', function () {
+        thisCartProduct.amount = thisCartProduct.amountWidget.value;
+        thisCartProduct.price = thisCartProduct.amount * thisCartProduct.priceSingle;
+        thisCartProduct.dom.price.innerHTML = thisCartProduct.price;
+      });
     }
   }
   const app = {
 
     initMenu: function(){
       const thisApp = this;
-      //console.log('thisApp.data: ', thisApp.data);
-
 
       for(let productData in thisApp.data.products){
         new Product(productData, thisApp.data.products[productData]);
@@ -431,11 +451,7 @@
 
     init: function(){
       const thisApp = this;
-      //console.log('*** App starting ***');
-      console.log('thisApp:', thisApp);
-      console.log('classNames:', classNames);
-      console.log('settings:', settings);
-      console.log('templates:', templates);
+      console.log('*** App starting ***');
 
       thisApp.initData();
       thisApp.initMenu();
