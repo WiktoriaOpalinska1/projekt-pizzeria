@@ -1,5 +1,6 @@
-{
-    "products":[
+{  
+   "orders": [],
+   "products":[
        {
           "id":"cake",
           "class":"small",
