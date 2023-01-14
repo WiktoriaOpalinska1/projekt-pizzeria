@@ -485,7 +485,6 @@
       /* Call update() */
       thisCart.update();
     }
-<<<<<<< HEAD
 
     sendOrder(){
       const thisCart = this;
@@ -520,8 +519,6 @@
           console.log('parsedResponse:', parsedResponse);
         });
     }
-=======
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
   }
 
   class CartProduct{
