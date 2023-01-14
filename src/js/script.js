@@ -72,15 +72,11 @@
     cart: {
       defaultDeliveryFee: 20,
     },
-<<<<<<< HEAD
     db: {
       url: '//localhost:3131',
       products: 'products',
       orders: 'orders',
     },
-=======
-    
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
   };
   
   const templates = {
@@ -381,13 +377,10 @@
       thisCart.dom.subtotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
       thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice);
       thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
-<<<<<<< HEAD
 
       thisCart.dom.form = thisCart.dom.wrapper.querySelector(select.cart.form);
       thisCart.dom.address = thisCart.dom.wrapper.querySelector(select.cart.address);
       thisCart.dom.phone = thisCart.dom.wrapper.querySelector(select.cart.phone);
-=======
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
     }
 
     initActions(){
@@ -401,13 +394,10 @@
       thisCart.dom.productList.addEventListener('remove', function(event){
         thisCart.remove(event.detail.cartProduct);
       });
-<<<<<<< HEAD
       thisCart.dom.form.addEventListener('submit', function(event){
         event.preventDefault();
         thisCart.sendOrder();
       });
-=======
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
     }
 
     add(menuProduct){
@@ -428,7 +418,6 @@
     update(){
       const thisCart = this;
       thisCart.deliveryFee = settings.cart.defaultDeliveryFee;
-<<<<<<< HEAD
       thisCart.totalNumber = 0;
       thisCart.subtotalPrice = 0;
 
@@ -439,33 +428,15 @@
 
       if (thisCart.totalNumber !== 0) {
         thisCart.totalPrice = thisCart.deliveryFee + thisCart.subtotalPrice;
-=======
-      let totalNumber = 0;
-      let subtotalPrice = 0;
-
-      for (let cartProduct of thisCart.products) {
-        totalNumber += cartProduct.amount;
-        subtotalPrice += cartProduct.price;
-      }
-
-      if (totalNumber !== 0) {
-        thisCart.totalPrice = thisCart.deliveryFee + subtotalPrice;
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
       } else {
         thisCart.totalPrice = 0;
         thisCart.deliveryFee = 0;
       }
 
       /* Update html code for cart */
-<<<<<<< HEAD
       thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
       thisCart.dom.deliveryFee.innerHTML = thisCart.deliveryFee;
       thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
-=======
-      thisCart.dom.totalNumber.innerHTML = totalNumber;
-      thisCart.dom.deliveryFee.innerHTML = thisCart.deliveryFee;
-      thisCart.dom.subtotalPrice.innerHTML = subtotalPrice;
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
       for (let totalPriceHolder of thisCart.dom.totalPrice) {
         totalPriceHolder.innerHTML = thisCart.totalPrice;
       }
@@ -570,10 +541,6 @@
 
       thisCartProduct.dom.wrapper.dispatchEvent(event);
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
     initActions(){
       const thisCartProduct = this;
 
@@ -582,7 +549,6 @@
         event.preventDefault();
         thisCartProduct.remove();
       });
-<<<<<<< HEAD
     }
 
     getData(){
@@ -598,9 +564,6 @@
       };
       
       return prod;
-=======
-
->>>>>>> d193f355135370d5ff04404f0c52a16bb1cf8b44
     }
   }
   const app = {
